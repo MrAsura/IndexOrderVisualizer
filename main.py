@@ -43,13 +43,13 @@ def createIndexOrderInfo(frmt):
         xs.append(x)
         ys.append(y)
   
-    return (xs,ys,xticks,yticks)
+    return (xs,ys,xticks,yticks,xbits,ybits)
 
 """
 Create a plot for the index order for the given parameters
 """
-def printIndexOrder(frmt, xs, ys, xticks, yticks):
-    pp.figure(figsize=(len(xticks),len(yticks)))
+def printIndexOrder(frmt, xs, ys, xticks, yticks, xbits, ybits):
+    pp.figure(figsize=(len(xticks)+0.1*len(frmt),len(yticks)))
     pp.plot(xs,ys)
     pp.title(frmt, y=(1 + 1/len(yticks)))
     pp.xlabel("x")
@@ -63,9 +63,28 @@ def printIndexOrder(frmt, xs, ys, xticks, yticks):
     ax.invert_yaxis()
     #ax.tick_params(axis='x',which='major',pad=len(xticks))
     #ax.tick_params(axis='y',which='major',pad=len(yticks))
+    ax.tick_params(axis='x',which='major',labelcolor='blue')
+    ax.tick_params(axis='y',which='major',labelcolor='red')
     
-    pp.margins(1/(len(xticks)+len(yticks)))
-    pp.subplots_adjust(bottom=0.15)
+    #Draw binary index of each data point
+    for (x,y) in zip(xs,ys):
+        x_ind = -xbits
+        y_ind = -ybits
+        for i in range(len(frmt)):
+            if frmt[-i-1] is '1':
+                c = 'blue'
+                val = xticks[x][x_ind]
+                x_ind += 1
+            else:
+                c = 'red'
+                val = yticks[y][y_ind]
+                y_ind += 1 
+            xy = (x + (i * 0.105) - 0.1 * xbits, y - 0.05 )
+            ax.annotate(val,color=c, xy=xy, textcoords='data')
+    
+    
+    pp.margins(1/len(xticks)*0.5,1/len(yticks)*0.5)
+    #pp.subplots_adjust(bottom=0.15)
 
 if __name__ == "__main__":
     
